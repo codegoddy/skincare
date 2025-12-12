@@ -28,9 +28,9 @@ export default function ShopPage() {
            </div>
 
            {/* Category Navigation */}
-           <div className="hidden md:flex flex-wrap items-center justify-center gap-10 mb-16 text-xs font-bold tracking-widest uppercase border-y border-gray-100 py-5">
+           <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap items-center gap-6 md:gap-10 mb-16 text-xs font-bold tracking-widest uppercase border-y border-gray-100 py-5 whitespace-nowrap no-scrollbar px-4 md:px-0 -mx-4 md:mx-0 justify-start md:justify-center">
                {['Home', 'Shop', 'Brands', 'Skincare', 'Body', 'Hair Care', 'Fragrance', 'Make Up'].map(item => (
-                   <span key={item} className="cursor-pointer hover:text-black hover:underline underline-offset-4 transition-all">{item}</span>
+                   <span key={item} className="cursor-pointer hover:text-black hover:underline underline-offset-4 transition-all flex-shrink-0">{item}</span>
                ))}
            </div>
 

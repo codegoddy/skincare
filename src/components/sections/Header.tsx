@@ -83,8 +83,8 @@ export default function Header() {
           </nav>
 
           {/* Actions */}
-          <div className="hidden md:flex items-center gap-6">
-            <div className="flex items-center border-r border-gray-200 pr-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            <div className="hidden md:flex items-center border-r border-gray-200 pr-6">
                 <button 
                   onClick={() => setIsSearchOpen(!isSearchOpen)}
                   className="flex items-center text-xs font-bold text-gray-500 hover:text-black transition-colors"
@@ -109,8 +109,8 @@ export default function Header() {
             </div>
 
             <div className="flex items-center gap-4">
-               {/* Account Icon (optional, keeping it simple or replacing Sign Up) */}
-               <Link href="/login" className="text-gray-500 hover:text-black transition-colors">
+               {/* Account Icon */}
+               <Link href="/login" className="hidden md:block text-gray-500 hover:text-black transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                </Link>
 
@@ -124,27 +124,27 @@ export default function Header() {
                   )}
                </button>
             </div>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-gray-600"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <span className="sr-only">Open menu</span>
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            {/* Mobile Menu Button */}
+            <button
+                className="md:hidden p-2 text-gray-600"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+                <span className="sr-only">Open menu</span>
+                <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                >
+                {isMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+                </svg>
+            </button>
+          </div>
         </div>
       </Container>
       

@@ -67,7 +67,7 @@ export default function ProductPage() {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 mb-32">
               {/* Left: Image */}
               <FadeIn direction="right">
-                <div className="aspect-[4/5] bg-gray-50 flex items-center justify-center border-2 border-black sticky top-32">
+                <div className="aspect-[4/5] bg-gray-50 flex items-center justify-center border-2 border-black md:sticky md:top-32">
                     <img 
                         src={product.image} 
                         alt={product.name} 

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import Button from "@/components/ui/Button";
 
@@ -81,9 +82,11 @@ export default function CartDrawer() {
                     <span className="text-xl font-bold tracking-tight">${cartTotal.toFixed(2)} USD</span>
                 </div>
                 <p className="text-xs text-center text-gray-400 mb-6">Tax included. Shipping calculated at checkout.</p>
-                <Button className="w-full bg-black text-white hover:bg-gray-800 rounded-none py-4 text-sm font-bold tracking-widest uppercase">
-                    Checkout
-                </Button>
+                <Link href="/checkout" onClick={toggleCart} className="block w-full">
+                    <Button className="w-full rounded-none border-2 border-black !bg-transparent !text-black hover:!bg-black hover:!text-white transition-all duration-300 py-4 text-sm font-bold tracking-widest uppercase">
+                        Checkout
+                    </Button>
+                </Link>
              </div>
          )}
       </div>
