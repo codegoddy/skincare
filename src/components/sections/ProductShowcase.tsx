@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import FadeIn from "@/components/ui/FadeIn";
 import Link from "next/link";
+import Image from "next/image";
 
 const products = [
   {
@@ -53,10 +54,12 @@ export default function ProductShowcase() {
                 <div className="group flex flex-col h-full">
                   {/* Image Container */}
                   <div className="relative w-full aspect-square bg-gray-50 mb-6 overflow-hidden border-2 border-black">
-                    <img 
+                    <Image 
                       src={product.image} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                     />
                     
                     {/* New Badge */}

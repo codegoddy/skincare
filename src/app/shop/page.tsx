@@ -10,6 +10,7 @@ import Badge from "@/components/ui/Badge";
 import { useCart } from "@/context/CartContext";
 import { allProducts } from "@/data/products";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ShopPage() {
   const { addToCart } = useCart();
@@ -91,10 +92,12 @@ export default function ShopPage() {
                               <Link href={`/shop/${product.id}`} className="block">
                                   {/* Image Container */}
                                   <div className="relative w-full aspect-[4/5] bg-gray-50 mb-6 overflow-hidden border-2 border-black">
-                                    <img 
+                                    <Image 
                                       src={product.image} 
-                                      alt={product.name} 
-                                      className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                                      alt={product.name}
+                                      fill
+                                      sizes="(max-width: 768px) 100vw, 33vw"
+                                      className="object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                                     />
                                     
                                     {/* New Badge */}

@@ -10,6 +10,7 @@ import FadeIn from "@/components/ui/FadeIn";
 import { useCart } from "@/context/CartContext";
 import { allProducts } from "@/data/products";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProductPage() {
   const params = useParams();
@@ -67,11 +68,14 @@ export default function ProductPage() {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 mb-32">
               {/* Left: Image */}
               <FadeIn direction="right">
-                <div className="aspect-[4/5] bg-gray-50 flex items-center justify-center border-2 border-black md:sticky md:top-32">
-                    <img 
+                <div className="relative aspect-[4/5] bg-gray-50 flex items-center justify-center border-2 border-black md:sticky md:top-32">
+                    <Image 
                         src={product.image} 
-                        alt={product.name} 
-                        className="h-3/4 w-auto object-contain mix-blend-multiply"
+                        alt={product.name}
+                        fill
+                        priority
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-contain p-8 mix-blend-multiply"
                     />
                 </div>
               </FadeIn>
@@ -130,8 +134,14 @@ export default function ProductPage() {
                    {relatedProducts.map((p, i) => (
                        <FadeIn key={p.id} delay={i * 0.1} direction="up">
                            <Link href={`/shop/${p.id}`} className="group block">
-                               <div className="aspect-square bg-gray-50 mb-4 flex items-center justify-center border border-gray-100 group-hover:border-black transition-colors">
-                                   <img src={p.image} alt={p.name} className="h-40 object-contain mix-blend-multiply transition-transform group-hover:scale-110" />
+                               <div className="relative aspect-square bg-gray-50 mb-4 flex items-center justify-center border border-gray-100 group-hover:border-black transition-colors overflow-hidden">
+                                   <Image 
+                                     src={p.image} 
+                                     alt={p.name} 
+                                     fill
+                                     sizes="(max-width: 768px) 100vw, 33vw"
+                                     className="object-contain p-4 mix-blend-multiply transition-transform group-hover:scale-110" 
+                                   />
                                </div>
                                <h3 className="text-xs font-bold uppercase tracking-widest mb-1">{p.name}</h3>
                                <p className="text-sm text-gray-500">{p.price}</p>

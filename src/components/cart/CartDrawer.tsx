@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import Button from "@/components/ui/Button";
 
@@ -48,8 +49,14 @@ export default function CartDrawer() {
             ) : (
                 cart.map((item) => (
                     <div key={item.id} className="flex gap-4">
-                        <div className="h-24 w-24 bg-gray-50 flex-shrink-0 border border-gray-100 flex items-center justify-center p-2">
-                            <img src={item.image} alt={item.name} className="h-full w-full object-contain mix-blend-multiply" />
+                        <div className="relative h-24 w-24 bg-gray-50 flex-shrink-0 border border-gray-100 flex items-center justify-center p-2">
+                            <Image 
+                              src={item.image} 
+                              alt={item.name} 
+                              fill
+                              sizes="96px"
+                              className="object-contain mix-blend-multiply p-2"
+                            />
                         </div>
                         <div className="flex-1 flex flex-col justify-between py-1">
                             <div>
