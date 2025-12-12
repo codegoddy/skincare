@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #000000;
+  --color-secondary: #FFFFFF;
+  --color-accent: #D5FF40;
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
