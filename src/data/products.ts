@@ -5,7 +5,7 @@ export const allProducts = [
     type: "CLEANSER",
     price: "KSh 10,400",
     description: "A powerful yet gentle formulation designed to combat acne while maintaining your skin's natural moisture barrier. Enriched with salicylic acid and tea tree oil, it reduces inflammation and clears pores for a smooth, blemish-free complexion.",
-    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
   {
@@ -14,7 +14,7 @@ export const allProducts = [
     type: "CLEANSER",
     price: "KSh 6,500",
     description: "Start your day with a refreshing cleanse. This mild face wash removes impurities and excess oil without stripping your skin. Perfect for sensitive skin types, leaving you feeling fresh and hydrated.",
-    image: "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=1780&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: true,
   },
   {
@@ -23,7 +23,7 @@ export const allProducts = [
     type: "CLEANSER", // Probably should be MOISTURIZER but keeping original type
     price: "KSh 11,700",
     description: "Restore softness to your hands with our ultra-rich moisturizing cream. Infused with shea butter and vitamin E, it provides deep hydration and protects against dryness.",
-    image: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?q=80&w=1888&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
   {
@@ -32,7 +32,7 @@ export const allProducts = [
     type: "SERUM",
     price: "KSh 8,450",
     description: "Awaken tired eyes with this lightweight serum. Targets dark circles and puffiness with caffeine and hyaluronic acid, delivering a brighter, more youthful appearance.",
-    image: "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?q=80&w=1887&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
   {
@@ -41,7 +41,7 @@ export const allProducts = [
     type: "TONER",
     price: "KSh 5,850",
     description: "Balance and prep your skin with our calming hydrating toner. Alcohol-free and packed with rose water, it soothes redness and refines pores.",
-    image: "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?q=80&w=1887&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: true,
   },
   {
@@ -50,7 +50,7 @@ export const allProducts = [
     type: "MOISTURIZER",
     price: "KSh 12,350",
     description: "Wake up to renewed skin. This luxurious night cream works while you sleep to repair damage and boost collagen production for a firmer, smoother texture.",
-    image: "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?q=80&w=1887&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
   {
@@ -59,7 +59,7 @@ export const allProducts = [
     type: "SERUM",
     price: "KSh 9,750",
     description: "Get that radiant glow instantly. Our concentrated Vitamin C drops brighten dull skin and fade dark spots over time, giving you a luminous complexion.",
-    image: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=1887&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: true,
   },
   {
@@ -68,7 +68,7 @@ export const allProducts = [
     type: "EXFOLIATOR",
     price: "KSh 7,150",
     description: "Buff away dead skin cells gently with our natural exfoliating scrub. Features jojoba beads for a non-abrasive polish that reveals softer, brighter skin.",
-    image: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?q=80&w=1000&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
   {
@@ -77,7 +77,7 @@ export const allProducts = [
     type: "OIL",
     price: "KSh 11,050",
     description: "Nourish and balance your skin with this lightweight face oil. a blend of argan and marula oils locks in moisture without clogging pores.",
-    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
 ];

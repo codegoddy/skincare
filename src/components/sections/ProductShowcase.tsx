@@ -12,7 +12,7 @@ const products = [
     name: "ANTI ACNE FACE CREAM",
     type: "CLEANSER",
     price: "KSh 10,400",
-    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
   {
@@ -20,7 +20,7 @@ const products = [
     name: "MILD CLEANSING FACE WASH",
     type: "CLEANSER",
     price: "KSh 6,500",
-    image: "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=1780&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: true,
   },
   {
@@ -28,7 +28,7 @@ const products = [
     name: "MOISTURIZING HAND CREAM",
     type: "CLEANSER",
     price: "KSh 11,700",
-    image: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?q=80&w=1888&auto=format&fit=crop",
+    image: "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
     isNew: false,
   },
 ];

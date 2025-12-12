@@ -221,7 +221,13 @@ export default function Header() {
                </Link>
               ))}
               <div className="flex flex-col gap-2 mt-2 px-4">
-                <button className="flex items-center gap-2 py-2 text-sm font-medium text-gray-600">
+                <button 
+                  onClick={() => {
+                    setIsSearchOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 py-2 text-sm font-medium text-gray-600"
+                >
                     Search
                 </button>
                 <button className="py-2 text-sm font-medium text-left text-gray-600 hover:text-primary">

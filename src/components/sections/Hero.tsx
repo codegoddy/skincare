@@ -8,12 +8,12 @@ export default function Hero() {
         
         {/* Row 1: NATURE AURA */}
         <div className="text-center mb-4">
-          <FadeIn delay={0.1} direction="up">
+          <FadeIn delay={0} direction="up">
              <span className="text-[13vw] sm:text-[90px] lg:text-[140px] font-medium tracking-tight text-black leading-none inline-block">
                 NATURE
              </span>
           </FadeIn>
-          <FadeIn delay={0.2} direction="up">
+          <FadeIn delay={0.1} direction="up">
              <span className="text-[13vw] sm:text-[90px] lg:text-[140px] font-serif italic text-gray-200 leading-none inline-block ml-2 sm:ml-4">
                 AURA
              </span>
@@ -22,7 +22,7 @@ export default function Hero() {
 
         {/* Row 2: ELEGANCE */}
         <div className="text-center mb-2">
-          <FadeIn delay={0.3} direction="up">
+          <FadeIn delay={0.2} direction="up">
               <span className="text-[13vw] sm:text-[90px] lg:text-[140px] font-serif italic text-black leading-none inline-block">
                 ELEGANCE
               </span>
@@ -31,7 +31,7 @@ export default function Hero() {
 
         {/* Row 3: EXQUISITE SKIN */}
         <div className="text-center mb-4">
-          <FadeIn delay={0.4} direction="up">
+          <FadeIn delay={0.3} direction="up">
              <span className="text-[13vw] sm:text-[90px] lg:text-[140px] font-medium tracking-tight text-black leading-none inline-block">
                EXQUISITE SKIN
              </span>
@@ -40,7 +40,7 @@ export default function Hero() {
 
         {/* Row 4: REVIVAL + Triangles */}
         <div className="text-center">
-            <FadeIn delay={0.5} direction="up">
+            <FadeIn delay={0.4} direction="up">
                <span className="text-[13vw] sm:text-[90px] lg:text-[140px] font-medium tracking-tight text-black leading-none">
                  REVIVAL
                </span>

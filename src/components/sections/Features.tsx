@@ -3,6 +3,7 @@ import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import FadeIn from "@/components/ui/FadeIn";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Features() {
   return (
@@ -11,17 +12,21 @@ export default function Features() {
         {/* Images Split */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <FadeIn direction="right" delay={0.2} className="relative aspect-[4/5] bg-gray-100 overflow-hidden group border-2 border-black">
-             <img 
-               src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?q=80&w=1887&auto=format&fit=crop" 
-               alt="Infused Love" 
-               className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+             <Image 
+               src="/michela-ampolo-7tDGb3HrITg-unsplash.jpg" 
+               alt="Infused Love"
+               fill
+               sizes="(max-width: 768px) 100vw, 50vw"
+               className="object-cover transition-transform duration-700 group-hover:scale-105"
              />
           </FadeIn>
           <FadeIn direction="left" delay={0.4} className="relative aspect-[4/5] bg-gray-100 overflow-hidden group border-2 border-black">
-             <img 
-               src="https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?q=80&w=1887&auto=format&fit=crop" 
-               alt="Infused Beauty" 
-               className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+             <Image 
+               src="/michela-ampolo-7tDGb3HrITg-unsplash.jpg" 
+               alt="Infused Beauty"
+               fill
+               sizes="(max-width: 768px) 100vw, 50vw"
+               className="object-cover transition-transform duration-700 group-hover:scale-105"
              />
           </FadeIn>
         </div>

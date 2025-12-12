@@ -1,4 +1,5 @@
-import React from "react";
+import Link from "next/link";
+import Image from "next/image";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import { motion } from "framer-motion";
@@ -23,13 +24,19 @@ export default function SocialGallery() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
              {[
-               "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop",
-               "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=1780&auto=format&fit=crop",
-               "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?q=80&w=1888&auto=format&fit=crop",
-               "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?q=80&w=1887&auto=format&fit=crop"
+               "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
+               "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
+               "/michela-ampolo-7tDGb3HrITg-unsplash.jpg",
+               "/michela-ampolo-7tDGb3HrITg-unsplash.jpg"
              ].map((src, i) => (
-                <FadeIn key={i} delay={i * 0.1} direction="up" className="aspect-square bg-gray-100 overflow-hidden border-2 border-black">
-                   <img src={src} alt={`Gallery ${i+1}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" />
+                <FadeIn key={i} delay={i * 0.1} direction="up" className="aspect-square bg-gray-100 overflow-hidden border-2 border-black relative">
+                   <Image 
+                     src={src} 
+                     alt={`Gallery ${i+1}`}
+                     fill
+                     sizes="(max-width: 768px) 50vw, 25vw"
+                     className="object-cover hover:scale-110 transition-transform duration-700" 
+                   />
                 </FadeIn>
              ))}
           </div>
