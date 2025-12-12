@@ -12,14 +12,14 @@ export default function Features() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <FadeIn direction="right" delay={0.2} className="relative aspect-[4/5] bg-gray-100 overflow-hidden group border-2 border-black">
              <img 
-               src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=1888&auto=format&fit=crop" 
+               src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?q=80&w=1887&auto=format&fit=crop" 
                alt="Infused Love" 
                className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
              />
           </FadeIn>
           <FadeIn direction="left" delay={0.4} className="relative aspect-[4/5] bg-gray-100 overflow-hidden group border-2 border-black">
              <img 
-               src="https://images.unsplash.com/photo-1556228720-1987594a8a63?q=80&w=1887&auto=format&fit=crop" 
+               src="https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?q=80&w=1887&auto=format&fit=crop" 
                alt="Infused Beauty" 
                className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
              />

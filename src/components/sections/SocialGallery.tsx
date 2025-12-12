@@ -23,10 +23,10 @@ export default function SocialGallery() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
              {[
-               "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2070&auto=format&fit=crop",
-               "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=2070&auto=format&fit=crop",
-               "https://images.unsplash.com/photo-1554196346-b985817a29f8?q=80&w=2070&auto=format&fit=crop",
-               "https://images.unsplash.com/photo-1512207848382-147991b9c27b?q=80&w=2069&auto=format&fit=crop"
+               "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop",
+               "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=1780&auto=format&fit=crop",
+               "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?q=80&w=1888&auto=format&fit=crop",
+               "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?q=80&w=1887&auto=format&fit=crop"
              ].map((src, i) => (
                 <FadeIn key={i} delay={i * 0.1} direction="up" className="aspect-square bg-gray-100 overflow-hidden border-2 border-black">
                    <img src={src} alt={`Gallery ${i+1}`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" />

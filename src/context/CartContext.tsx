@@ -62,7 +62,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  // Helper to parse price string "$80.00 USD" -> 80.00
+  // Helper to parse price string "KSh 10,400" -> 10400
   const parsePrice = (priceStr: string) => {
     return parseFloat(priceStr.replace(/[^0-9.]/g, ""));
   };

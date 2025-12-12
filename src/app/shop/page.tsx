@@ -90,11 +90,11 @@ export default function ShopPage() {
                             <div className="group flex flex-col h-full">
                               <Link href={`/shop/${product.id}`} className="block">
                                   {/* Image Container */}
-                                  <div className="relative w-full aspect-[4/5] bg-gray-50 flex items-center justify-center mb-6 overflow-visible border-2 border-black">
+                                  <div className="relative w-full aspect-[4/5] bg-gray-50 mb-6 overflow-hidden border-2 border-black">
                                     <img 
                                       src={product.image} 
                                       alt={product.name} 
-                                      className="h-48 w-auto object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                                      className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                                     />
                                     
                                     {/* New Badge */}

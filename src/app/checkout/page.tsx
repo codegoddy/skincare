@@ -9,8 +9,12 @@ import { useCart } from "@/context/CartContext";
 export default function CheckoutPage() {
   const { cart, cartTotal } = useCart();
   const [shippingMethod, setShippingMethod] = useState("standard");
+  const [country, setCountry] = useState("United States");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  const countries = ["United States", "Canada", "United Kingdom", "Australia"];
 
-  const shippingCost = shippingMethod === "standard" ? 10 : 25;
+  const shippingCost = shippingMethod === "standard" ? 500 : 1500;
   const total = cartTotal + shippingCost;
 
   if (cart.length === 0) {
@@ -34,7 +38,7 @@ export default function CheckoutPage() {
                  {/* Header */}
                  <div className="flex items-center justify-between">
                     <Link href="/" className="text-2xl font-bold tracking-tight">ZEN<span className="font-light text-gray-400">GLOW</span></Link>
-                    <Link href="/cart" className="text-xs font-bold text-gray-500 hover:text-black">Return to Cart</Link>
+                    <Link href="/shop" className="text-xs font-bold text-gray-500 hover:text-black">Return to Shop</Link>
                  </div>
 
                  {/* Breadcrumbs */}
@@ -62,12 +66,41 @@ export default function CheckoutPage() {
                  <section>
                      <h2 className="text-lg font-bold mb-4">Shipping Address</h2>
                      <div className="space-y-4 grid grid-cols-2 gap-4">
-                         <select className="col-span-2 border border-gray-300 rounded-none focus:ring-black focus:border-black p-3 text-sm bg-white">
-                             <option>United States</option>
-                             <option>Canada</option>
-                             <option>United Kingdom</option>
-                             <option>Australia</option>
-                         </select>
+                         <div className="relative col-span-2">
+                             <div 
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                className="w-full border border-gray-300 p-3 text-sm bg-white cursor-pointer flex justify-between items-center"
+                             >
+                                 {country}
+                                 <svg 
+                                    width="10" 
+                                    height="6" 
+                                    viewBox="0 0 10 6" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    className={`transform transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+                                 >
+                                    <path d="M1 1L5 5L9 1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                 </svg>
+                             </div>
+                             
+                             {isDropdownOpen && (
+                                 <div className="absolute top-full left-0 w-full bg-white border border-gray-300 border-t-0 z-10 max-h-48 overflow-y-auto">
+                                     {countries.map((c) => (
+                                         <div 
+                                            key={c}
+                                            onClick={() => {
+                                                setCountry(c);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                            className="p-3 text-sm hover:bg-gray-50 cursor-pointer"
+                                         >
+                                             {c}
+                                         </div>
+                                     ))}
+                                 </div>
+                             )}
+                         </div>
                          <input type="text" placeholder="First name" className="border border-gray-300 rounded-none focus:ring-black focus:border-black p-3 text-sm placeholder:text-gray-400" />
                          <input type="text" placeholder="Last name" className="border border-gray-300 rounded-none focus:ring-black focus:border-black p-3 text-sm placeholder:text-gray-400" />
                          <input type="text" placeholder="Address" className="col-span-2 border border-gray-300 rounded-none focus:ring-black focus:border-black p-3 text-sm placeholder:text-gray-400" />
@@ -119,7 +152,7 @@ export default function CheckoutPage() {
                  <div className="space-y-4 border-b border-gray-200 pb-6 mb-6 text-sm text-gray-600">
                      <div className="flex justify-between">
                          <span>Subtotal</span>
-                         <span className="font-medium text-gray-900">${cartTotal.toFixed(2)}</span>
+                         <span className="font-medium text-gray-900">KSh {cartTotal.toLocaleString()}</span>
                      </div>
                      <div className="flex justify-between">
                          <span className="flex items-center gap-2">
@@ -128,15 +161,15 @@ export default function CheckoutPage() {
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 cursor-help"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                              </div>
                          </span>
-                         <span className="font-medium text-gray-900">${shippingCost.toFixed(2)}</span>
+                         <span className="font-medium text-gray-900">KSh {shippingCost.toLocaleString()}</span>
                      </div>
                  </div>
 
                  <div className="flex justify-between items-center">
                      <span className="text-lg font-bold text-gray-900">Total</span>
                      <div className="text-right">
-                         <span className="text-xs text-gray-500 mr-2">USD</span>
-                         <span className="text-2xl font-bold text-gray-900">${total.toFixed(2)}</span>
+                         <span className="text-xs text-gray-500 mr-2">KSh</span>
+                         <span className="text-2xl font-bold text-gray-900">{total.toLocaleString()}</span>
                      </div>
                  </div>
              </div>

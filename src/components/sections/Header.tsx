@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Container from "@/components/ui/Container";
 import { useCart } from "@/context/CartContext";
 
@@ -20,7 +21,21 @@ export default function Header() {
     { label: "Gallery", href: "/#gallery", id: "gallery" },
   ];
 
+  const pathname = usePathname();
+
   useEffect(() => {
+    // If we are on the shop page, set active section to 'shop'
+    if (pathname.startsWith("/shop")) {
+      setActiveSection("shop");
+      return;
+    }
+
+    // If we are not on the homepage, don't run scroll spy
+    if (pathname !== "/") {
+      setActiveSection("");
+      return;
+    }
+
     const handleScroll = () => {
       // Skip scroll detection if we're in the middle of a click navigation
       if (isScrollingRef.current) return;
@@ -41,7 +56,7 @@ export default function Header() {
     handleScroll(); // Check initial position
     
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   const handleNavClick = (id: string) => {
     // Lock scroll detection during navigation

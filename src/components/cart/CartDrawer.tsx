@@ -79,7 +79,7 @@ export default function CartDrawer() {
              <div className="p-6 border-t border-gray-100 bg-gray-50">
                 <div className="flex justify-between items-center mb-4">
                     <span className="text-sm font-medium text-gray-500">Subtotal</span>
-                    <span className="text-xl font-bold tracking-tight">${cartTotal.toFixed(2)} USD</span>
+                    <span className="text-xl font-bold tracking-tight">KSh {cartTotal.toLocaleString()}</span>
                 </div>
                 <p className="text-xs text-center text-gray-400 mb-6">Tax included. Shipping calculated at checkout.</p>
                 <Link href="/checkout" onClick={toggleCart} className="block w-full">

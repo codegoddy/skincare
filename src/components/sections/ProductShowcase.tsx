@@ -10,7 +10,7 @@ const products = [
     id: 1,
     name: "ANTI ACNE FACE CREAM",
     type: "CLEANSER",
-    price: "$80.00 USD",
+    price: "KSh 10,400",
     image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop",
     isNew: false,
   },
@@ -18,7 +18,7 @@ const products = [
     id: 2,
     name: "MILD CLEANSING FACE WASH",
     type: "CLEANSER",
-    price: "$50.00 USD",
+    price: "KSh 6,500",
     image: "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=1780&auto=format&fit=crop",
     isNew: true,
   },
@@ -26,7 +26,7 @@ const products = [
     id: 3,
     name: "MOISTURIZING HAND CREAM",
     type: "CLEANSER",
-    price: "$90.00 USD",
+    price: "KSh 11,700",
     image: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?q=80&w=1888&auto=format&fit=crop",
     isNew: false,
   },
@@ -52,11 +52,11 @@ export default function ProductShowcase() {
              <FadeIn key={product.id} delay={0.2 * idx} direction="up" className="h-full">
                 <div className="group flex flex-col h-full">
                   {/* Image Container */}
-                  <div className="relative w-full aspect-square bg-gray-50 flex items-center justify-center mb-6 overflow-visible border-2 border-black">
+                  <div className="relative w-full aspect-square bg-gray-50 mb-6 overflow-hidden border-2 border-black">
                     <img 
                       src={product.image} 
                       alt={product.name} 
-                      className="h-48 w-auto object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                     />
                     
                     {/* New Badge */}
