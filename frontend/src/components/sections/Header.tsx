@@ -5,15 +5,41 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Container from "@/components/ui/Container";
 import { useCart } from "@/context/CartContext";
+import { getAccessToken } from "@/lib/api";
+import { useLogout } from "@/hooks/useAuth";
+import { useAuthStore } from "@/stores/auth";
+import { User, LogOut, ChevronDown } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("home");
+  const [hasToken, setHasToken] = useState(false);
   const isScrollingRef = useRef(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
   const { toggleCart, cartCount } = useCart();
+  const { user } = useAuthStore();
+  const logoutMutation = useLogout();
   const router = useRouter();
+
+  // Check for token on mount and when it changes
+  useEffect(() => {
+    const token = getAccessToken();
+    setHasToken(!!token);
+  }, [user]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -80,6 +106,11 @@ export default function Header() {
     }, 800);
   };
 
+  const handleLogout = () => {
+    setIsProfileDropdownOpen(false);
+    logoutMutation.mutate();
+  };
+
   return (
     <header className="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-md transition-all duration-300 border-b border-white/20 supports-[backdrop-filter]:bg-white/60">
       <Container>
@@ -134,10 +165,59 @@ export default function Header() {
             </div>
 
             <div className="flex items-center gap-4">
-               {/* Account Icon */}
-               <Link href="/login" className="hidden md:block text-gray-500 hover:text-black transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-               </Link>
+               {/* Account Icon with Dropdown */}
+               <div className="relative hidden md:block" ref={profileDropdownRef}>
+                 {hasToken ? (
+                   <>
+                     <button 
+                       onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                       className="flex items-center gap-1 text-gray-500 hover:text-black transition-colors"
+                     >
+                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                       <ChevronDown size={14} className={`transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                     </button>
+                     
+                     {/* Dropdown Menu */}
+                     {isProfileDropdownOpen && (
+                       <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 shadow-xl z-50 overflow-hidden">
+                         <div className="px-4 py-3 bg-accent/50 border-b border-gray-100">
+                           <p className="text-sm font-bold text-primary truncate">{user?.full_name || 'Welcome'}</p>
+                           <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                         </div>
+                         <Link 
+                           href="/profile"
+                           onClick={() => setIsProfileDropdownOpen(false)}
+                           className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-accent hover:text-primary transition-colors"
+                         >
+                           <User size={16} />
+                           My Profile
+                         </Link>
+                         <Link 
+                           href="/orders"
+                           onClick={() => setIsProfileDropdownOpen(false)}
+                           className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-accent hover:text-primary transition-colors"
+                         >
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                           My Orders
+                         </Link>
+                         <div className="border-t border-gray-100">
+                           <button
+                             onClick={handleLogout}
+                             className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                           >
+                             <LogOut size={16} />
+                             Sign Out
+                           </button>
+                         </div>
+                       </div>
+                     )}
+                   </>
+                 ) : (
+                   <Link href="/login" className="text-gray-500 hover:text-black transition-colors">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                   </Link>
+                 )}
+               </div>
 
                {/* Cart Icon */}
                <button onClick={toggleCart} className="text-gray-500 hover:text-black transition-colors relative">
@@ -233,7 +313,7 @@ export default function Header() {
                  {link.label.toUpperCase()}
                </Link>
               ))}
-              <div className="flex flex-col gap-2 mt-2 px-4">
+              <div className="flex flex-col gap-2 mt-2 px-4 border-t border-gray-100 pt-4">
                 <button 
                   onClick={() => {
                     setIsSearchOpen(true);
@@ -243,9 +323,45 @@ export default function Header() {
                 >
                     Search
                 </button>
-                <button className="py-2 text-sm font-medium text-left text-gray-600 hover:text-primary">
-                    Sign Up
-                </button>
+                {hasToken ? (
+                  <>
+                    <Link 
+                      href="/profile"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-2 py-2 text-sm font-medium text-gray-600 hover:text-primary"
+                    >
+                      <User size={16} />
+                      My Profile
+                    </Link>
+                    <button 
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        logoutMutation.mutate();
+                      }}
+                      className="flex items-center gap-2 py-2 text-sm font-medium text-red-600 hover:text-red-700"
+                    >
+                      <LogOut size={16} />
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link 
+                      href="/login"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="py-2 text-sm font-medium text-gray-600 hover:text-primary"
+                    >
+                      Sign In
+                    </Link>
+                    <Link 
+                      href="/signup"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="py-2 text-sm font-medium text-gray-600 hover:text-primary"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </Container>

@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 };
 
 import { CartProvider } from "@/context/CartContext";
+import { QueryProvider } from "@/providers/QueryProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
-
-/* ... existing imports */
+import { Toaster } from "@/components/ui/Toaster";
 
 export default function RootLayout({
   children,
@@ -23,12 +23,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        <CartProvider>
-          <CartDrawer />
-          {children}
-        </CartProvider>
+        <QueryProvider>
+          <CartProvider>
+            <CartDrawer />
+            <Toaster />
+            {children}
+          </CartProvider>
+        </QueryProvider>
       </body>
     </html>
   );
 }
-
