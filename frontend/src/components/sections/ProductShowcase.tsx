@@ -64,7 +64,7 @@ export default function ProductShowcase() {
                     
                     {/* New Badge */}
                     {product.isNew && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-10 transition-transform group-hover:rotate-12">
+                      <div className="absolute top-4 left-4 z-10">
                         <Badge text="NEW" color="accent" />
                       </div>
                     )}

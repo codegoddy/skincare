@@ -2,16 +2,26 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Container from "@/components/ui/Container";
 import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("home");
   const isScrollingRef = useRef(false);
   const { toggleCart, cartCount } = useCart();
+  const router = useRouter();
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   const navLinks = [
     { label: "Home", href: "/#home", id: "home" },
@@ -185,6 +195,9 @@ export default function Header() {
                 <input 
                   type="text" 
                   placeholder="SEARCH FOR..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   className="flex-1 h-full text-xl uppercase tracking-widest font-medium placeholder:text-gray-300 border-none focus:outline-none bg-transparent"
                   autoFocus={isSearchOpen}
                 />

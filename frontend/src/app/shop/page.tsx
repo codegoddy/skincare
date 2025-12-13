@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import Container from "@/components/ui/Container";
@@ -12,8 +12,22 @@ import { allProducts } from "@/data/products";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function ShopPage() {
+import { useSearchParams } from "next/navigation";
+
+function ShopContent() {
   const { addToCart } = useCart();
+  const searchParams = useSearchParams();
+  const query = searchParams.get('search');
+
+  const filteredProducts = allProducts.filter(product => {
+      if (!query) return true;
+      const lowerQuery = query.toLowerCase();
+      return (
+          product.name.toLowerCase().includes(lowerQuery) ||
+          product.type.toLowerCase().includes(lowerQuery) || 
+          product.description?.toLowerCase().includes(lowerQuery)
+      );
+  });
   return (
     <main className="flex min-h-screen flex-col bg-white">
       <Header />
@@ -74,7 +88,9 @@ export default function ShopPage() {
                                <button className="hover:text-black transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 10H4v6h6v-6zm0-10H4v6h6V0zm0 20H4v4h6v-4zm10-10h-6v6h6v-6zm0-10h-6v6h6V0zm0 20h-6v4h6v-4z"/></svg></button>
                                <button className="hover:text-black transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/></svg></button>
                            </div>
-                           <span className="text-xs font-bold tracking-widest text-gray-500 uppercase">{allProducts.length} Products</span>
+                           <span className="text-xs font-bold tracking-widest text-gray-500 uppercase">
+                               {filteredProducts.length} Product{filteredProducts.length !== 1 ? 's' : ''} {query && `found for "${query}"`}
+                           </span>
                        </div>
 
                        {/* Right: Sort */}
@@ -85,8 +101,9 @@ export default function ShopPage() {
                    </div>
 
                    {/* Product Grid */}
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-12">
-                      {allProducts.map((product, idx) => (
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-12 min-h-[400px]">
+                      {filteredProducts.length > 0 ? (
+                        filteredProducts.map((product, idx) => (
                          <FadeIn key={product.id} delay={idx * 0.1} direction="up" className="h-full">
                             <div className="group flex flex-col h-full">
                               <Link href={`/shop/${product.id}`} className="block">
@@ -102,7 +119,7 @@ export default function ShopPage() {
                                     
                                     {/* New Badge */}
                                     {product.isNew && (
-                                      <div className="absolute -top-4 -right-4 z-10 transition-transform group-hover:rotate-12 scale-75">
+                                      <div className="absolute top-4 left-4 z-10">
                                         <Badge text="NEW" color="accent" />
                                       </div>
                                     )}
@@ -133,7 +150,16 @@ export default function ShopPage() {
                                 </div>
                             </div>
                          </FadeIn>
-                      ))}
+                      ))
+                    ) : (
+                        <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                            <h3 className="text-xl font-bold mb-4">No products found</h3>
+                            <p className="text-gray-500 mb-8">We couldn't find any products matching "{query}". Please try a different search term.</p>
+                            <Link href="/shop">
+                                <Button>Clear Search</Button>
+                            </Link>
+                        </div>
+                    )}
                    </div>
                </div>
            </div>
@@ -141,5 +167,13 @@ export default function ShopPage() {
       </div>
       <Footer />
     </main>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center">Loading...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }

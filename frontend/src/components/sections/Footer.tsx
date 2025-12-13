@@ -4,9 +4,9 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white py-20 relative overflow-hidden">
+    <footer className="bg-black text-white py-20 relative overflow-hidden z-[60]">
       <Container>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
           {/* Logo & Description */}
           <div className="col-span-2 md:col-span-1">
             <div className="text-2xl font-bold tracking-tight mb-4">
@@ -17,17 +17,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Navigation */}
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest mb-4 text-white">Navigation</h4>
-            <ul className="space-y-3">
-              <li><Link href="/#home" className="text-sm text-gray-400 hover:text-accent transition-colors">Home</Link></li>
-              <li><Link href="/#about" className="text-sm text-gray-400 hover:text-accent transition-colors">About Us</Link></li>
-              <li><Link href="/#products" className="text-sm text-gray-400 hover:text-accent transition-colors">Products</Link></li>
-              <li><Link href="/#reviews" className="text-sm text-gray-400 hover:text-accent transition-colors">Reviews</Link></li>
-              <li><Link href="/#gallery" className="text-sm text-gray-400 hover:text-accent transition-colors">Gallery</Link></li>
-            </ul>
-          </div>
+
 
           {/* Quick Links */}
           <div>
@@ -96,7 +86,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500 border-t border-gray-800 pt-8 mt-10">
-           <p>© 2024 ZenGlow Beauty. All rights reserved.</p>
+           <p>© {new Date().getFullYear()} ZenGlow Beauty. All rights reserved.</p>
            <div className="flex gap-6">
              <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
              <a href="#" className="hover:text-accent transition-colors">Terms of Service</a>

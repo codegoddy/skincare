@@ -7,7 +7,7 @@ import { useCart } from "@/context/CartContext";
 import Button from "@/components/ui/Button";
 
 export default function CartDrawer() {
-  const { isCartOpen, toggleCart, cart, removeFromCart, cartTotal } = useCart();
+  const { isCartOpen, toggleCart, cart, removeFromCart, updateQuantity, cartTotal } = useCart();
 
   return (
     <>
@@ -70,9 +70,9 @@ export default function CartDrawer() {
                             </div>
                             <div className="flex justify-between items-end">
                                 <div className="flex items-center border border-gray-200">
-                                    <button className="px-2 py-1 text-gray-500 hover:bg-gray-50">-</button>
+                                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-2 py-1 text-gray-500 hover:bg-gray-50">-</button>
                                     <span className="text-xs font-bold px-2">{item.quantity}</span>
-                                    <button className="px-2 py-1 text-gray-500 hover:bg-gray-50">+</button>
+                                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-2 py-1 text-gray-500 hover:bg-gray-50">+</button>
                                 </div>
                             </div>
                         </div>
