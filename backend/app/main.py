@@ -13,6 +13,7 @@ from app.config import get_settings
 from app.api import api_router
 from app.shared.rate_limit import limiter
 from app.shared.websocket import manager
+from app.shared.maintenance import check_maintenance_mode
 
 
 @asynccontextmanager
@@ -59,6 +60,12 @@ def create_app() -> FastAPI:
         expose_headers=["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset"],
         max_age=600,  # Cache preflight for 10 minutes
     )
+    
+    # Maintenance mode middleware
+    @app.middleware("http")
+    async def maintenance_middleware(request: Request, call_next):
+        """Check maintenance mode before processing requests."""
+        return await check_maintenance_mode(request, call_next)
     
     # Health check (no rate limit)
     @app.get("/health", tags=["Health"])

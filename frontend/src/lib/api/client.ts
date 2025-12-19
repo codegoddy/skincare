@@ -27,9 +27,14 @@ export function clearTokens(): void {
 
 // API Error class
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  public maintenance?: boolean;
+  public detail?: string;
+  
+  constructor(public status: number, message: string, data?: any) {
     super(message);
     this.name = 'ApiError';
+    this.maintenance = data?.maintenance;
+    this.detail = data?.detail || message;
   }
 }
 
@@ -58,7 +63,7 @@ export async function apiClient<T>(
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ detail: 'Request failed' }));
-    throw new ApiError(response.status, errorData.detail || `HTTP ${response.status}`);
+    throw new ApiError(response.status, errorData.detail || `HTTP ${response.status}`, errorData);
   }
   
   return response.json();
