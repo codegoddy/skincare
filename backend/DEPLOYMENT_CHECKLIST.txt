@@ -1,0 +1,102 @@
+╔════════════════════════════════════════════════════════════════╗
+║           RENDER DEPLOYMENT CHECKLIST - ZenGlow Backend        ║
+╚════════════════════════════════════════════════════════════════╝
+
+PRE-DEPLOYMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Supabase project created and database setup complete
+□ All database migrations tested locally (alembic upgrade head)
+□ Code pushed to GitHub repository
+□ Render account created (https://render.com)
+□ Optional: Cloudinary account for image uploads
+
+DEPLOYMENT SETUP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Connected GitHub repository to Render
+□ Created Web Service or used Blueprint deployment
+□ Selected Free plan
+□ Configured to deploy from 'main' branch
+
+ENVIRONMENT VARIABLES (Render Dashboard → Environment)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Required - Supabase:
+□ SUPABASE_URL
+□ SUPABASE_ANON_KEY
+□ SUPABASE_SERVICE_ROLE_KEY
+
+Required - Database (⚠️ Use Transaction Pooler - Port 6543):
+□ user
+□ password
+□ host
+□ port (set to 6543)
+□ dbname (set to postgres)
+
+Required - Application:
+□ DEBUG (set to false)
+□ FRONTEND_URL (your Vercel URL)
+□ BACKEND_URL (your Render URL)
+
+Optional - Rate Limiting:
+□ RATE_LIMIT_DEFAULT (default: 60)
+□ RATE_LIMIT_AUTH (default: 10)
+□ RATE_LIMIT_STRICT (default: 5)
+
+Optional - Cloudinary:
+□ CLOUDINARY_CLOUD_NAME
+□ CLOUDINARY_API_KEY
+□ CLOUDINARY_API_SECRET
+
+POST-DEPLOYMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Deployment completed successfully
+□ Health check responding: https://your-backend.onrender.com/health
+□ Check logs for any errors
+□ Database migrations ran successfully
+
+FRONTEND INTEGRATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Updated Vercel environment variable: NEXT_PUBLIC_API_URL
+□ Redeployed frontend on Vercel
+□ CORS working (frontend can connect to backend)
+
+TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Health endpoint works: curl https://your-backend.onrender.com/health
+□ API docs accessible (if DEBUG=true): /docs
+□ User signup works
+□ User login works
+□ Protected endpoints require authentication
+□ Rate limiting working correctly
+
+MONITORING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Bookmarked Render logs page
+□ Set up error notifications (optional)
+□ Optional: Configured uptime monitoring (cron-job.org)
+
+╔════════════════════════════════════════════════════════════════╗
+║                      DEPLOYMENT COMPLETE! 🎉                   ║
+║         Your backend is live on Render's free tier!           ║
+╚════════════════════════════════════════════════════════════════╝
+
+📍 Backend URL: https://your-backend.onrender.com
+📍 Health Check: https://your-backend.onrender.com/health
+📍 API Docs: https://your-backend.onrender.com/docs (if DEBUG=true)
+
+⚠️  FREE TIER NOTES:
+• Service sleeps after 15 minutes of inactivity
+• First request after sleep: 30-60 second cold start
+• 750 free hours per month
+• 512 MB RAM limit
+
+📚 Documentation:
+• Quick start: QUICK_START.md
+• Full guide: DEPLOYMENT.md
+• README: README.md

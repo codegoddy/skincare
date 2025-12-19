@@ -136,3 +136,36 @@ create trigger on_auth_user_created
 - **Supabase** - Auth & database
 - **Pydantic** - Data validation
 - **Uvicorn** - ASGI server
+- **Gunicorn** - Production WSGI server
+
+## 🚀 Deployment
+
+### Deploy to Render (Free Tier)
+
+This backend is configured for easy deployment to Render's free tier.
+
+**Quick Deploy:**
+1. Push your code to GitHub
+2. Connect repository to Render
+3. Render auto-detects `render.yaml` configuration
+4. Add environment variables in Render dashboard
+5. Deploy!
+
+**Detailed Instructions:** See [DEPLOYMENT.md](./DEPLOYMENT.md) for:
+- Step-by-step deployment guide
+- Environment variables configuration
+- Troubleshooting tips
+- Free tier limitations and best practices
+
+**Required Environment Variables:**
+- Supabase credentials (URL, keys)
+- Database connection (use Transaction Pooler - port 6543)
+- Frontend URL (your Vercel deployment)
+- Optional: Cloudinary for image uploads
+
+### Deploy Files
+
+- `render.yaml` - Render Blueprint configuration
+- `build.sh` - Build script (installs deps, runs migrations)
+- `start.sh` - Production start script with gunicorn
+- `.env.production.example` - Environment variables template

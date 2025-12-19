@@ -4,10 +4,12 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
+import { useStoreConfig } from "@/context/StoreConfigContext";
 import Button from "@/components/ui/Button";
 
 export default function CartDrawer() {
   const { isCartOpen, toggleCart, cart, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { formatPrice } = useStoreConfig();
 
   return (
     <>
@@ -86,7 +88,7 @@ export default function CartDrawer() {
              <div className="p-6 border-t border-gray-100 bg-gray-50">
                 <div className="flex justify-between items-center mb-4">
                     <span className="text-sm font-medium text-gray-500">Subtotal</span>
-                    <span className="text-xl font-bold tracking-tight">KSh {cartTotal.toLocaleString()}</span>
+                    <span className="text-xl font-bold tracking-tight">{formatPrice(cartTotal)}</span>
                 </div>
                 <p className="text-xs text-center text-gray-400 mb-6">Tax included. Shipping calculated at checkout.</p>
                 <Link href="/checkout" onClick={toggleCart} className="block w-full">
@@ -100,3 +102,4 @@ export default function CartDrawer() {
     </>
   );
 }
+

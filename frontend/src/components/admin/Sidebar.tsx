@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, ShoppingBag, Users, Package, Settings, LogOut, X } from 'lucide-react';
+import { useLogout } from '@/hooks/useAuth';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -20,6 +21,11 @@ const menuItems = [
 
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const logoutMutation = useLogout();
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <>
@@ -76,9 +82,15 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         </nav>
 
         <div className="p-8 border-t border-white/10">
-          <button className="flex items-center gap-4 w-full px-5 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all group">
+          <button 
+            onClick={handleLogout}
+            disabled={logoutMutation.isPending}
+            className="flex items-center gap-4 w-full px-5 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all group disabled:opacity-50"
+          >
             <LogOut size={18} className="group-hover:text-white transition-colors" />
-            <span className="uppercase tracking-wide text-xs">Logout</span>
+            <span className="uppercase tracking-wide text-xs">
+              {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
+            </span>
           </button>
         </div>
       </aside>

@@ -1,0 +1,55 @@
+services:
+  # Backend API Service
+  - type: web
+    name: zenglow-backend
+    env: python
+    region: oregon  # Choose your preferred region
+    plan: free
+    branch: main  # Deploy from main branch
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+    healthCheckPath: /health
+    envVars:
+      # Supabase Configuration
+      - key: SUPABASE_URL
+        sync: false  # Set manually in Render dashboard
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      
+      # Database Connection (Supabase Pooler)
+      - key: user
+        sync: false
+      - key: password
+        sync: false
+      - key: host
+        sync: false
+      - key: port
+        value: "6543"
+      - key: dbname
+        value: "postgres"
+      
+      # Application Settings
+      - key: DEBUG
+        value: "false"
+      - key: FRONTEND_URL
+        value: "https://your-frontend-app.vercel.app"  # Update with your Vercel URL
+      - key: BACKEND_URL
+        sync: false  # Will be auto-set by Render
+      
+      # Rate Limiting
+      - key: RATE_LIMIT_DEFAULT
+        value: "60"
+      - key: RATE_LIMIT_AUTH
+        value: "10"
+      - key: RATE_LIMIT_STRICT
+        value: "5"
+      
+      # Cloudinary (Optional - for image uploads)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

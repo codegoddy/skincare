@@ -41,6 +41,12 @@ class Settings(BaseSettings):
     rate_limit_auth: int = 10     # Auth endpoints (login, signup)
     rate_limit_strict: int = 5    # Sensitive endpoints (password reset)
     
+    # Cloudinary
+    cloudinary_cloud_name: str = ""
+    cloudinary_api_key: str = ""
+    cloudinary_api_secret: str = ""
+
+    
     @property
     def cors_origins(self) -> list[str]:
         """Allowed CORS origins."""

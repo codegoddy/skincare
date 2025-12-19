@@ -3,17 +3,20 @@ Orders API routes.
 """
 from typing import Any
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Query
 
 from app.config import get_settings
-from app.shared.security import get_current_user
+from app.shared.security import get_current_user, require_admin
 from app.shared.rate_limit import limiter
 from app.services.orders.schemas import (
     OrderCreate,
     OrderResponse,
     OrderListResponse,
+    AdminOrderListResponse,
+    AdminOrderDetailResponse,
+    OrderStatusUpdate,
 )
-from app.services.orders.service import OrdersService
+from app.services.orders.service import OrdersService, AdminOrdersService
 
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
@@ -76,3 +79,68 @@ async def create_order(
     """
     user_id = current_user.get("id")
     return await OrdersService.create_order(user_id, data)
+
+
+# Admin routes
+admin_router = APIRouter(prefix="/admin/orders", tags=["Admin Orders"])
+
+
+@admin_router.get(
+    "",
+    response_model=AdminOrderListResponse,
+    summary="List all orders (admin)",
+)
+@limiter.limit(lambda: f"{get_settings().rate_limit_default}/minute")
+async def admin_list_orders(
+    request: Request,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    status: str | None = Query(None),
+    current_user: dict[str, Any] = Depends(require_admin)
+) -> AdminOrderListResponse:
+    """
+    Get all orders with pagination and filters.
+    
+    Requires admin role.
+    """
+    return await AdminOrdersService.list_orders(page, page_size, status)
+
+
+@admin_router.get(
+    "/{order_id}",
+    response_model=AdminOrderDetailResponse,
+    summary="Get order details (admin)",
+)
+@limiter.limit(lambda: f"{get_settings().rate_limit_default}/minute")
+async def admin_get_order(
+    request: Request,
+    order_id: str,
+    current_user: dict[str, Any] = Depends(require_admin)
+) -> AdminOrderDetailResponse:
+    """
+    Get a single order with full details.
+    
+    Requires admin role.
+    """
+    return await AdminOrdersService.get_order(order_id)
+
+
+@admin_router.patch(
+    "/{order_id}/status",
+    response_model=AdminOrderDetailResponse,
+    summary="Update order status",
+)
+@limiter.limit(lambda: f"{get_settings().rate_limit_default}/minute")
+async def admin_update_order_status(
+    request: Request,
+    order_id: str,
+    data: OrderStatusUpdate,
+    current_user: dict[str, Any] = Depends(require_admin)
+) -> AdminOrderDetailResponse:
+    """
+    Update order status.
+    
+    Requires admin role.
+    """
+    return await AdminOrdersService.update_order_status(order_id, data.status)
+

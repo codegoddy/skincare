@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import Container from "@/components/ui/Container";
@@ -8,26 +8,54 @@ import FadeIn from "@/components/ui/FadeIn";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useCart } from "@/context/CartContext";
-import { allProducts } from "@/data/products";
+import { useStoreConfig } from "@/context/StoreConfigContext";
+import { useProducts, useProductFilters } from "@/hooks/useProducts";
+import { useProductsWebSocket } from "@/hooks/useProductsWebSocket";
 import Link from "next/link";
 import Image from "next/image";
+import { Loader2 } from "lucide-react";
 
 import { useSearchParams } from "next/navigation";
 
 function ShopContent() {
   const { addToCart } = useCart();
+  const { formatPrice } = useStoreConfig();
   const searchParams = useSearchParams();
-  const query = searchParams.get('search');
-
-  const filteredProducts = allProducts.filter(product => {
-      if (!query) return true;
-      const lowerQuery = query.toLowerCase();
-      return (
-          product.name.toLowerCase().includes(lowerQuery) ||
-          product.type.toLowerCase().includes(lowerQuery) || 
-          product.description?.toLowerCase().includes(lowerQuery)
-      );
+  const query = searchParams.get('search') || '';
+  
+  // Filters state
+  const [productType, setProductType] = useState<string | undefined>();
+  const [skinConcern, setSkinConcern] = useState<string | undefined>();
+  const [skinType, setSkinType] = useState<string | undefined>();
+  const [usageTime, setUsageTime] = useState<string | undefined>();
+  
+  // Fetch products from API
+  const { data, isLoading, isError } = useProducts({
+    search: query || undefined,
+    product_type: productType,
+    skin_concern: skinConcern,
+    skin_type: skinType,
+    usage_time: usageTime,
+    page_size: 50,
   });
+  
+  // Get filter options
+  const { data: filters } = useProductFilters();
+  
+  // Real-time updates
+  useProductsWebSocket();
+  
+  const products = data?.products || [];
+
+  const clearFilters = () => {
+    setProductType(undefined);
+    setSkinConcern(undefined);
+    setSkinType(undefined);
+    setUsageTime(undefined);
+  };
+
+  const hasActiveFilters = productType || skinConcern || skinType || usageTime;
+
   return (
     <main className="flex min-h-screen flex-col bg-white">
       <Header />
@@ -44,38 +72,106 @@ function ShopContent() {
 
            {/* Category Navigation */}
            <div className="flex overflow-x-auto md:overflow-visible md:flex-wrap items-center gap-6 md:gap-10 mb-16 text-xs font-bold tracking-widest uppercase border-y border-gray-100 py-5 whitespace-nowrap no-scrollbar px-4 md:px-0 -mx-4 md:mx-0 justify-start md:justify-center">
-               {['Home', 'Shop', 'Brands', 'Skincare', 'Body', 'Hair Care', 'Fragrance', 'Make Up'].map(item => (
-                   <span key={item} className="cursor-pointer hover:text-black hover:underline underline-offset-4 transition-all flex-shrink-0">{item}</span>
+               {filters?.product_types?.map(type => (
+                   <span 
+                     key={type} 
+                     onClick={() => setProductType(productType === type ? undefined : type)}
+                     className={`cursor-pointer hover:text-black hover:underline underline-offset-4 transition-all flex-shrink-0 ${productType === type ? 'text-black underline' : 'text-gray-500'}`}
+                   >
+                     {type}
+                   </span>
                ))}
            </div>
 
            <div className="flex flex-col md:flex-row gap-12">
                {/* Sidebar Filters */}
                <div className="w-full md:w-64 flex-shrink-0 space-y-6">
-                   <div className="border-b border-gray-200 pb-2 mb-6 md:hidden">
-                       <span className="font-bold">FILTERS</span>
+                   <div className="border-b border-gray-200 pb-2 mb-6 flex items-center justify-between">
+                       <span className="font-bold text-sm uppercase tracking-widest">Filters</span>
+                       {hasActiveFilters && (
+                         <button 
+                           onClick={clearFilters}
+                           className="text-xs text-primary hover:underline"
+                         >
+                           Clear All
+                         </button>
+                       )}
                    </div>
                    
-                   {['BY AVAILABILITY', 'BY SKIN TYPE', 'BY SKIN CONCERN', 'BY PRICE'].map((filter, i) => (
-                       <FadeIn key={filter} delay={i * 0.1} direction="right">
-                           <details className="group border-b border-gray-200 pb-4 cursor-pointer">
-                               <summary className="flex items-center justify-between text-xs font-bold tracking-widest list-none uppercase select-none hover:text-gray-500 transition-colors">
-                                   {filter}
-                                   <span className="transform group-open:rotate-180 transition-transform duration-300">
-                                       <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                   </span>
-                               </summary>
-                               <div className="pt-4 space-y-2 text-sm text-gray-500">
-                                   <label className="flex items-center gap-2 cursor-pointer hover:text-black transition-colors">
-                                       <input type="checkbox" className="rounded-none border-gray-300 text-black focus:ring-0" /> Option 1
-                                   </label>
-                                   <label className="flex items-center gap-2 cursor-pointer hover:text-black transition-colors">
-                                       <input type="checkbox" className="rounded-none border-gray-300 text-black focus:ring-0" /> Option 2
-                                   </label>
-                               </div>
-                           </details>
-                       </FadeIn>
-                   ))}
+                   {/* Skin Concern Filter */}
+                   <FadeIn delay={0.1} direction="right">
+                       <details className="group border-b border-gray-200 pb-4 cursor-pointer" open>
+                           <summary className="flex items-center justify-between text-xs font-bold tracking-widest list-none uppercase select-none hover:text-gray-500 transition-colors">
+                               By Skin Concern
+                               <span className="transform group-open:rotate-180 transition-transform duration-300">
+                                   <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                               </span>
+                           </summary>
+                           <div className="pt-4 space-y-2 text-sm text-gray-500">
+                               {filters?.skin_concerns?.map(concern => (
+                                 <label key={concern} className="flex items-center gap-2 cursor-pointer hover:text-black transition-colors">
+                                     <input 
+                                       type="checkbox" 
+                                       checked={skinConcern === concern}
+                                       onChange={() => setSkinConcern(skinConcern === concern ? undefined : concern)}
+                                       className="rounded-none border-gray-300 text-black focus:ring-0" 
+                                     /> 
+                                     {concern}
+                                 </label>
+                               ))}
+                           </div>
+                       </details>
+                   </FadeIn>
+
+                   {/* Skin Type Filter */}
+                   <FadeIn delay={0.2} direction="right">
+                       <details className="group border-b border-gray-200 pb-4 cursor-pointer">
+                           <summary className="flex items-center justify-between text-xs font-bold tracking-widest list-none uppercase select-none hover:text-gray-500 transition-colors">
+                               By Skin Type
+                               <span className="transform group-open:rotate-180 transition-transform duration-300">
+                                   <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                               </span>
+                           </summary>
+                           <div className="pt-4 space-y-2 text-sm text-gray-500">
+                               {filters?.skin_types?.map(type => (
+                                 <label key={type} className="flex items-center gap-2 cursor-pointer hover:text-black transition-colors">
+                                     <input 
+                                       type="checkbox" 
+                                       checked={skinType === type}
+                                       onChange={() => setSkinType(skinType === type ? undefined : type)}
+                                       className="rounded-none border-gray-300 text-black focus:ring-0" 
+                                     /> 
+                                     {type}
+                                 </label>
+                               ))}
+                           </div>
+                       </details>
+                   </FadeIn>
+
+                   {/* Usage Time Filter */}
+                   <FadeIn delay={0.3} direction="right">
+                       <details className="group border-b border-gray-200 pb-4 cursor-pointer">
+                           <summary className="flex items-center justify-between text-xs font-bold tracking-widest list-none uppercase select-none hover:text-gray-500 transition-colors">
+                               By Usage Time
+                               <span className="transform group-open:rotate-180 transition-transform duration-300">
+                                   <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                               </span>
+                           </summary>
+                           <div className="pt-4 space-y-2 text-sm text-gray-500">
+                               {filters?.usage_times?.map(time => (
+                                 <label key={time} className="flex items-center gap-2 cursor-pointer hover:text-black transition-colors">
+                                     <input 
+                                       type="checkbox" 
+                                       checked={usageTime === time}
+                                       onChange={() => setUsageTime(usageTime === time ? undefined : time)}
+                                       className="rounded-none border-gray-300 text-black focus:ring-0" 
+                                     /> 
+                                     {time}
+                                 </label>
+                               ))}
+                           </div>
+                       </details>
+                   </FadeIn>
                </div>
 
                {/* Main Content */}
@@ -89,7 +185,7 @@ function ShopContent() {
                                <button className="hover:text-black transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/></svg></button>
                            </div>
                            <span className="text-xs font-bold tracking-widest text-gray-500 uppercase">
-                               {filteredProducts.length} Product{filteredProducts.length !== 1 ? 's' : ''} {query && `found for "${query}"`}
+                               {isLoading ? 'Loading...' : `${products.length} Product${products.length !== 1 ? 's' : ''}`} {query && `for "${query}"`}
                            </span>
                        </div>
 
@@ -102,25 +198,40 @@ function ShopContent() {
 
                    {/* Product Grid */}
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-12 min-h-[400px]">
-                      {filteredProducts.length > 0 ? (
-                        filteredProducts.map((product, idx) => (
-                         <FadeIn key={product.id} delay={idx * 0.1} direction="up" className="h-full">
+                      {isLoading ? (
+                        <div className="col-span-full flex items-center justify-center py-20">
+                          <Loader2 size={32} className="animate-spin text-primary" />
+                        </div>
+                      ) : isError ? (
+                        <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                            <h3 className="text-xl font-bold mb-4">Failed to load products</h3>
+                            <p className="text-gray-500 mb-8">Please try again later.</p>
+                        </div>
+                      ) : products.length > 0 ? (
+                        products.map((product, idx) => (
+                         <FadeIn key={product.id} delay={idx * 0.05} direction="up" className="h-full">
                             <div className="group flex flex-col h-full">
                               <Link href={`/shop/${product.id}`} className="block">
                                   {/* Image Container */}
                                   <div className="relative w-full aspect-[4/5] bg-gray-50 mb-6 overflow-hidden border-2 border-black">
-                                    <Image 
-                                      src={product.image} 
-                                      alt={product.name}
-                                      fill
-                                      sizes="(max-width: 768px) 100vw, 33vw"
-                                      className="object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
-                                    />
+                                    {product.images?.[0] ? (
+                                      <Image 
+                                        src={product.images[0]} 
+                                        alt={product.name}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                        className="object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
+                                        No Image
+                                      </div>
+                                    )}
                                     
-                                    {/* New Badge */}
-                                    {product.isNew && (
+                                    {/* Compare price = sale */}
+                                    {product.compare_price && (
                                       <div className="absolute top-4 left-4 z-10">
-                                        <Badge text="NEW" color="accent" />
+                                        <Badge text="SALE" color="accent" />
                                       </div>
                                     )}
                                   </div>
@@ -129,8 +240,13 @@ function ShopContent() {
                                   <div className="w-full mt-auto text-center md:text-left">
                                     <div className="mb-2">
                                         <h3 className="text-xs font-bold tracking-widest uppercase mb-1">{product.name}</h3>
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">{product.type}</p>
-                                        <span className="text-sm font-medium block">{product.price}</span>
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">{product.product_type || 'Skincare'}</p>
+                                        <div className="flex items-center gap-2 justify-center md:justify-start">
+                                          <span className="text-sm font-medium">{formatPrice(product.price)}</span>
+                                          {product.compare_price && (
+                                            <span className="text-xs text-gray-400 line-through">{formatPrice(product.compare_price)}</span>
+                                          )}
+                                        </div>
                                     </div>
                                   </div>
                               </Link>
@@ -140,12 +256,13 @@ function ShopContent() {
                                       onClick={() => addToCart({
                                         id: product.id,
                                         name: product.name,
-                                        price: product.price,
-                                        image: product.image
+                                        price: formatPrice(product.price),
+                                        image: product.images?.[0] || '/placeholder.jpg'
                                       })}
-                                      className="w-full rounded-none border-2 border-black text-[10px] py-3 !bg-transparent !text-black hover:!bg-black hover:!text-white transition-all duration-300 uppercase font-bold tracking-widest"
+                                      disabled={!product.in_stock}
+                                      className="w-full rounded-none border-2 border-black text-[10px] py-3 !bg-transparent !text-black hover:!bg-black hover:!text-white transition-all duration-300 uppercase font-bold tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                       Add to Cart
+                                       {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
                                     </Button>
                                 </div>
                             </div>
@@ -154,10 +271,12 @@ function ShopContent() {
                     ) : (
                         <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
                             <h3 className="text-xl font-bold mb-4">No products found</h3>
-                            <p className="text-gray-500 mb-8">We couldn't find any products matching "{query}". Please try a different search term.</p>
-                            <Link href="/shop">
-                                <Button>Clear Search</Button>
-                            </Link>
+                            <p className="text-gray-500 mb-8">
+                              {query ? `We couldn't find any products matching "${query}".` : 'Try adjusting your filters.'}
+                            </p>
+                            {(query || hasActiveFilters) && (
+                              <Button onClick={clearFilters}>Clear Filters</Button>
+                            )}
                         </div>
                     )}
                    </div>
@@ -172,7 +291,7 @@ function ShopContent() {
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><Loader2 size={32} className="animate-spin" /></div>}>
       <ShopContent />
     </Suspense>
   );

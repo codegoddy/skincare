@@ -2,11 +2,12 @@
 
 import React, { useEffect } from "react";
 import { X, AlertTriangle, Trash2 } from "lucide-react";
+import { Product } from "@/lib/api/products";
 
 interface DeleteProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  product?: any;
+  product?: Product | null;
   onConfirm: () => void;
 }
 

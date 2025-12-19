@@ -41,7 +41,13 @@ export function useLogin() {
       setUser(response.user);
       queryClient.setQueryData(authKeys.user(), response.user);
       toast.success('Welcome back!');
-      router.push('/');
+      
+      // Redirect based on role - admins go to admin dashboard
+      if (response.user.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/');
+      }
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : 'Login failed');

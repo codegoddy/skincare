@@ -1,0 +1,8 @@
+# Add these lines to your backend/.gitignore if not already present
+
+# Deployment files that should be committed
+!render.yaml
+!build.sh
+!start.sh
+!.env.production.example
+!DEPLOYMENT.md

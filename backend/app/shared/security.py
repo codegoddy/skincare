@@ -73,8 +73,20 @@ async def require_admin(
     Raises:
         HTTPException: If user is not an admin.
     """
-    # Check user_metadata for role or fetch from user_profiles table
-    role = current_user.get("user_metadata", {}).get("role", "customer")
+    from app.database import get_supabase_admin_client
+    
+    # Fetch role from user_profiles table
+    client = get_supabase_admin_client()
+    response = (
+        client.table("user_profiles")
+        .select("role")
+        .eq("id", current_user.get("id"))
+        .execute()
+    )
+    
+    role = "customer"
+    if response.data and len(response.data) > 0:
+        role = response.data[0].get("role", "customer")
     
     if role != "admin":
         raise HTTPException(
@@ -82,4 +94,5 @@ async def require_admin(
             detail="Admin access required",
         )
     
+    current_user["role"] = role
     return current_user

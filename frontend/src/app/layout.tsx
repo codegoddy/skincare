@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 import { CartProvider } from "@/context/CartContext";
+import { StoreConfigProvider } from "@/context/StoreConfigContext";
 import { QueryProvider } from "@/providers/QueryProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { Toaster } from "@/components/ui/Toaster";
@@ -21,14 +22,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
         <QueryProvider>
-          <CartProvider>
-            <CartDrawer />
-            <Toaster />
-            {children}
-          </CartProvider>
+          <StoreConfigProvider>
+            <CartProvider>
+              <CartDrawer />
+              <Toaster />
+              {children}
+            </CartProvider>
+          </StoreConfigProvider>
         </QueryProvider>
       </body>
     </html>

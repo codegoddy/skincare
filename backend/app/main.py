@@ -3,7 +3,7 @@ FastAPI application entry point.
 """
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
@@ -12,6 +12,7 @@ from slowapi.errors import RateLimitExceeded
 from app.config import get_settings
 from app.api import api_router
 from app.shared.rate_limit import limiter
+from app.shared.websocket import manager
 
 
 @asynccontextmanager
@@ -65,6 +66,18 @@ def create_app() -> FastAPI:
         """Health check endpoint."""
         return {"status": "healthy", "service": "zenglow-api"}
     
+    # WebSocket endpoint for real-time updates
+    @app.websocket("/ws/products")
+    async def websocket_products(websocket: WebSocket):
+        """WebSocket for real-time product updates."""
+        await manager.connect(websocket, "products")
+        try:
+            while True:
+                # Keep connection alive - client can send ping
+                await websocket.receive_text()
+        except WebSocketDisconnect:
+            manager.disconnect(websocket, "products")
+    
     # Register API routes
     app.include_router(api_router)
     
@@ -72,3 +85,4 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
