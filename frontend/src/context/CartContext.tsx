@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuthStore } from "@/stores/auth";
 
 export interface CartItem {
   id: string | number;
@@ -17,28 +18,85 @@ interface CartContextType {
   removeFromCart: (id: string | number) => void;
   updateQuantity: (id: string | number, quantity: number) => void;
   toggleCart: () => void;
+  clearCart: () => void;
   cartCount: number;
   cartTotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+/**
+ * Get cart storage key for current user
+ * Uses user ID to ensure each user has their own cart
+ */
+const getCartStorageKey = (userId: string | null): string => {
+  if (userId) {
+    return `zenglow_cart_${userId}`;
+  }
+  // Guest cart (for non-logged in users)
+  return "zenglow_cart_guest";
+};
+
+/**
+ * Load cart from localStorage for specific user
+ */
+const loadCartFromStorage = (userId: string | null): CartItem[] => {
+  try {
+    const key = getCartStorageKey(userId);
+    const savedCart = localStorage.getItem(key);
+    if (savedCart) {
+      return JSON.parse(savedCart);
+    }
+  } catch (error) {
+    console.error("Failed to load cart from storage:", error);
+  }
+  return [];
+};
+
+/**
+ * Save cart to localStorage for specific user
+ */
+const saveCartToStorage = (userId: string | null, cart: CartItem[]): void => {
+  try {
+    const key = getCartStorageKey(userId);
+    localStorage.setItem(key, JSON.stringify(cart));
+  } catch (error) {
+    console.error("Failed to save cart to storage:", error);
+  }
+};
+
+/**
+ * Clear old/shared cart data (migration from old storage)
+ */
+const clearLegacyCart = (): void => {
+  try {
+    localStorage.removeItem("zenglow_cart");
+  } catch (error) {
+    console.error("Failed to clear legacy cart:", error);
+  }
+};
+
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const { user } = useAuthStore();
+  
+  const userId = user?.id || null;
 
-  // Load cart from local storage on mount
+  // Load cart from local storage on mount or when user changes
   useEffect(() => {
-    const savedCart = localStorage.getItem("zenglow_cart");
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
-  }, []);
+    // Clear old shared cart (one-time migration)
+    clearLegacyCart();
+    
+    // Load user-specific cart
+    const loadedCart = loadCartFromStorage(userId);
+    setCart(loadedCart);
+  }, [userId]);
 
   // Save cart to local storage whenever it changes
   useEffect(() => {
-    localStorage.setItem("zenglow_cart", JSON.stringify(cart));
-  }, [cart]);
+    saveCartToStorage(userId, cart);
+  }, [cart, userId]);
 
   const addToCart = (product: Omit<CartItem, "quantity">) => {
     setCart((prevCart) => {
@@ -70,6 +128,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const toggleCart = () => setIsCartOpen((prev) => !prev);
 
+  const clearCart = () => {
+    setCart([]);
+    saveCartToStorage(userId, []);
+  };
+
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   // Helper to parse price string "KSh 10,400" -> 10400
@@ -91,6 +154,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         removeFromCart,
         updateQuantity,
         toggleCart,
+        clearCart,
         cartCount,
         cartTotal,
       }}
