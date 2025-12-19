@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { getBlurDataURL } from '@/lib/imageUtils';
 import { Plus, Search, Filter, Edit, Trash2, Eye, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAdminProducts, useDeleteProduct } from '@/hooks/useProducts';
 import { useProductsWebSocket } from '@/hooks/useProductsWebSocket';
@@ -148,6 +149,9 @@ export default function ProductsPage() {
                                                         alt={product.name}
                                                         fill
                                                         className="object-cover"
+                                                        placeholder="blur"
+                                                        blurDataURL={getBlurDataURL(40, 40)}
+                                                        loading="lazy"
                                                     />
                                                 ) : (
                                                     <div className="w-full h-full bg-gray-200"></div>
@@ -231,6 +235,9 @@ export default function ProductsPage() {
                                             alt={product.name}
                                             fill
                                             className="object-cover"
+                                            placeholder="blur"
+                                            blurDataURL={getBlurDataURL(48, 48)}
+                                            loading="lazy"
                                         />
                                     ) : (
                                         <div className="w-full h-full bg-gray-200"></div>

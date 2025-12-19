@@ -12,6 +12,7 @@ import { useStoreConfig } from "@/context/StoreConfigContext";
 import { useProduct, useProducts } from "@/hooks/useProducts";
 import Link from "next/link";
 import Image from "next/image";
+import { getBlurDataURL } from "@/lib/imageUtils";
 import { Loader2 } from "lucide-react";
 
 export default function ProductPage() {
@@ -100,6 +101,8 @@ export default function ProductPage() {
                           loading="eager"
                           sizes="(max-width: 768px) 100vw, 50vw"
                           className="object-contain p-8 mix-blend-multiply"
+                          placeholder="blur"
+                          blurDataURL={getBlurDataURL(800, 1000)}
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-lg">No Image</div>
@@ -111,7 +114,15 @@ export default function ProductPage() {
                   <div className="flex gap-2 mt-4">
                     {product.images.map((img, idx) => (
                       <div key={idx} className="relative w-20 h-20 border border-gray-200 overflow-hidden">
-                        <Image src={img} alt={`${product.name} ${idx + 1}`} fill className="object-cover" />
+                        <Image 
+                          src={img} 
+                          alt={`${product.name} ${idx + 1}`} 
+                          fill 
+                          className="object-cover"
+                          placeholder="blur"
+                          blurDataURL={getBlurDataURL(200, 200)}
+                          loading="lazy"
+                        />
                       </div>
                     ))}
                   </div>
@@ -204,7 +215,10 @@ export default function ProductPage() {
                                          alt={p.name} 
                                          fill
                                          sizes="(max-width: 768px) 100vw, 33vw"
-                                         className="object-contain p-4 mix-blend-multiply transition-transform group-hover:scale-110" 
+                                         className="object-contain p-4 mix-blend-multiply transition-transform group-hover:scale-110"
+                                         placeholder="blur"
+                                         blurDataURL={getBlurDataURL(400, 500)}
+                                         loading="lazy"
                                        />
                                      ) : (
                                        <div className="text-gray-300">No Image</div>

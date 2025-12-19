@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getBlurDataURL, shouldPrioritize } from '@/lib/imageUtils';
 import { useRouter } from 'next/navigation';
 import { 
   Heart, 
@@ -128,6 +129,10 @@ export default function WishlistPage() {
                             fill
                             sizes="(max-width: 768px) 100vw, 33vw"
                             className={`object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110 ${!product.in_stock ? 'opacity-50' : ''}`}
+                            placeholder="blur"
+                            blurDataURL={getBlurDataURL(700, 875)}
+                            priority={shouldPrioritize(idx, 6)}
+                            loading={shouldPrioritize(idx, 6) ? "eager" : "lazy"}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-gray-300">

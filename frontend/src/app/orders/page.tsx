@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getBlurDataURL } from '@/lib/imageUtils';
 import { useRouter } from 'next/navigation';
 import { 
   ShoppingBag, 
@@ -114,6 +115,9 @@ export default function OrdersPage() {
                                 alt={order.items[0].name}
                                 fill
                                 className="object-cover"
+                                placeholder="blur"
+                                blurDataURL={getBlurDataURL(64, 64)}
+                                loading="lazy"
                               />
                               {order.items.length > 1 && (
                                 <div className="absolute -bottom-2 -right-2 bg-black text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center">
@@ -168,6 +172,9 @@ export default function OrdersPage() {
                                         alt={item.name}
                                         fill
                                         className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                        placeholder="blur"
+                                        blurDataURL={getBlurDataURL(400, 500)}
+                                        loading="lazy"
                                       />
                                     ) : (
                                       <div className="w-full h-full flex items-center justify-center text-gray-300">

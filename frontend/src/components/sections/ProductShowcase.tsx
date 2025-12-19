@@ -5,6 +5,7 @@ import Badge from "@/components/ui/Badge";
 import FadeIn from "@/components/ui/FadeIn";
 import Link from "next/link";
 import Image from "next/image";
+import { getBlurDataURL } from "@/lib/imageUtils";
 
 const products = [
   {
@@ -60,6 +61,10 @@ export default function ProductShowcase() {
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                      placeholder="blur"
+                      blurDataURL={getBlurDataURL(700, 700)}
+                      priority={idx === 0}
+                      loading={idx === 0 ? "eager" : "lazy"}
                     />
                     
                     {/* New Badge */}

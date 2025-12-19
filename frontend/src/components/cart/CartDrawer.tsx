@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getBlurDataURL } from "@/lib/imageUtils";
 import { useCart } from "@/context/CartContext";
 import { useStoreConfig } from "@/context/StoreConfigContext";
 import Button from "@/components/ui/Button";
@@ -58,6 +59,9 @@ export default function CartDrawer() {
                               fill
                               sizes="96px"
                               className="object-contain mix-blend-multiply p-2"
+                              placeholder="blur"
+                              blurDataURL={getBlurDataURL(96, 96)}
+                              loading="lazy"
                             />
                         </div>
                         <div className="flex-1 flex flex-col justify-between py-1">

@@ -13,6 +13,7 @@ import { useProducts, useProductFilters } from "@/hooks/useProducts";
 import { useProductsWebSocket } from "@/hooks/useProductsWebSocket";
 import Link from "next/link";
 import Image from "next/image";
+import { getBlurDataURL, shouldPrioritize } from "@/lib/imageUtils";
 import { Loader2 } from "lucide-react";
 
 import { useSearchParams } from "next/navigation";
@@ -221,6 +222,10 @@ function ShopContent() {
                                         fill
                                         sizes="(max-width: 768px) 100vw, 33vw"
                                         className="object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                                        placeholder="blur"
+                                        blurDataURL={getBlurDataURL(700, 875)}
+                                        priority={shouldPrioritize(idx, 6)}
+                                        loading={shouldPrioritize(idx, 6) ? "eager" : "lazy"}
                                       />
                                     ) : (
                                       <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
