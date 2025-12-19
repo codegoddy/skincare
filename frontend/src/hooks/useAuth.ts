@@ -86,6 +86,15 @@ export function useLogout() {
     onSuccess: () => {
       logout();
       queryClient.removeQueries({ queryKey: authKeys.all });
+      
+      // Clear cart on logout to prevent cart sharing between users
+      // The cart will automatically load guest cart or new user's cart on next login
+      if (typeof window !== 'undefined') {
+        // Remove all user-specific cart data
+        const cartKeys = Object.keys(localStorage).filter(key => key.startsWith('zenglow_cart_'));
+        cartKeys.forEach(key => localStorage.removeItem(key));
+      }
+      
       toast.info('You have been logged out');
       router.push('/login');
     },
@@ -93,6 +102,13 @@ export function useLogout() {
       // Even if logout fails on server, clear local state
       logout();
       queryClient.removeQueries({ queryKey: authKeys.all });
+      
+      // Clear cart on logout even if server logout fails
+      if (typeof window !== 'undefined') {
+        const cartKeys = Object.keys(localStorage).filter(key => key.startsWith('zenglow_cart_'));
+        cartKeys.forEach(key => localStorage.removeItem(key));
+      }
+      
       router.push('/login');
     },
   });
