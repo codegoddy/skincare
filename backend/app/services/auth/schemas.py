@@ -4,15 +4,30 @@ Pydantic schemas for authentication.
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
+
+from app.shared.password_validator import validate_password_strength
 
 
 # Request schemas
 class UserSignup(BaseModel):
     """User registration request."""
     email: EmailStr
-    password: str = Field(..., min_length=8, description="Minimum 8 characters")
+    password: str = Field(
+        ..., 
+        min_length=8, 
+        description="Must be at least 8 characters with uppercase, lowercase, number, and special character"
+    )
     full_name: str = Field(..., min_length=2, max_length=100)
+    
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        """Validate password strength."""
+        error = validate_password_strength(v)
+        if error:
+            raise ValueError(error)
+        return v
 
 
 class UserLogin(BaseModel):
@@ -29,7 +44,20 @@ class PasswordResetRequest(BaseModel):
 class PasswordUpdate(BaseModel):
     """Update password with reset token."""
     access_token: str
-    new_password: str = Field(..., min_length=8)
+    new_password: str = Field(
+        ..., 
+        min_length=8,
+        description="Must be at least 8 characters with uppercase, lowercase, number, and special character"
+    )
+    
+    @field_validator('new_password')
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        """Validate password strength."""
+        error = validate_password_strength(v)
+        if error:
+            raise ValueError(error)
+        return v
 
 
 class TokenRefresh(BaseModel):

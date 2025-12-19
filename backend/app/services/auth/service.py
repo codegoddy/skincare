@@ -6,6 +6,7 @@ from typing import Any
 from app.config import get_settings
 from app.database import get_supabase_client
 from app.shared.exceptions import AuthenticationError, ConflictError, ValidationError
+from app.shared.rate_limit_tracker import login_tracker
 from app.services.auth.schemas import (
     UserSignup,
     UserLogin,
@@ -92,8 +93,17 @@ class AuthService:
             Token response with access and refresh tokens
             
         Raises:
-            AuthenticationError: If credentials are invalid
+            AuthenticationError: If credentials are invalid or account is locked
         """
+        # Check if account is locked out
+        is_locked, seconds_remaining = await login_tracker.is_locked_out(data.email)
+        if is_locked:
+            minutes = int(seconds_remaining / 60) + 1
+            raise AuthenticationError(
+                f"Account temporarily locked due to multiple failed login attempts. "
+                f"Please try again in {minutes} minute(s)."
+            )
+        
         client = get_supabase_client()
         
         try:
@@ -103,7 +113,24 @@ class AuthService:
             })
             
             if not response.user or not response.session:
-                raise AuthenticationError("Invalid email or password")
+                # Record failed attempt
+                await login_tracker.record_failed_attempt(data.email)
+                
+                # Get remaining attempts
+                remaining = await login_tracker.get_remaining_attempts(data.email)
+                
+                if remaining > 0:
+                    raise AuthenticationError(
+                        f"Invalid email or password. {remaining} attempt(s) remaining before lockout."
+                    )
+                else:
+                    raise AuthenticationError(
+                        "Account temporarily locked due to multiple failed login attempts. "
+                        "Please try again in 15 minutes."
+                    )
+            
+            # Successful login - reset attempts
+            await login_tracker.reset_attempts(data.email)
             
             # Fetch profile for role
             profile = await UserRepository.get_profile_by_id(response.user.id)
@@ -117,8 +144,24 @@ class AuthService:
                 user=user_response,
             )
             
+        except AuthenticationError:
+            raise
         except Exception:
-            raise AuthenticationError("Invalid email or password")
+            # Record failed attempt
+            await login_tracker.record_failed_attempt(data.email)
+            
+            # Get remaining attempts
+            remaining = await login_tracker.get_remaining_attempts(data.email)
+            
+            if remaining > 0:
+                raise AuthenticationError(
+                    f"Invalid email or password. {remaining} attempt(s) remaining before lockout."
+                )
+            else:
+                raise AuthenticationError(
+                    "Account temporarily locked due to multiple failed login attempts. "
+                    "Please try again in 15 minutes."
+                )
 
     @staticmethod
     async def logout(access_token: str) -> None:
