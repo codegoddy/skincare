@@ -1,28 +1,32 @@
 /**
- * Base API client with token management
+ * Base API client with cookie-based authentication
  */
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-// Token management
+// Token management (now handled by cookies, these are no-ops for backward compatibility)
 export function getAccessToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('access_token');
+  // Tokens are now in HTTP-only cookies, not accessible from JS
+  return null;
 }
 
 export function getRefreshToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('refresh_token');
+  // Tokens are now in HTTP-only cookies, not accessible from JS
+  return null;
 }
 
 export function setTokens(accessToken: string, refreshToken: string): void {
-  localStorage.setItem('access_token', accessToken);
-  localStorage.setItem('refresh_token', refreshToken);
+  // Tokens are now set by the backend as HTTP-only cookies
+  // This function is kept for backward compatibility but does nothing
 }
 
 export function clearTokens(): void {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
+  // Tokens are now cleared by the backend
+  // Clean up any old localStorage tokens if they exist
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+  }
 }
 
 // API Error class
@@ -38,7 +42,7 @@ export class ApiError extends Error {
   }
 }
 
-// Base fetch function with auth
+// Base fetch function with cookie-based auth
 export async function apiClient<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -50,15 +54,11 @@ export async function apiClient<T>(
     ...options.headers,
   };
   
-  // Add auth header if token exists
-  const token = getAccessToken();
-  if (token) {
-    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
-  }
-  
+  // Send cookies with requests
   const response = await fetch(url, {
     ...options,
     headers,
+    credentials: 'include', // Important: send cookies with cross-origin requests
   });
   
   if (!response.ok) {

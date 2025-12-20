@@ -3,7 +3,7 @@ Authentication API routes with rate limiting.
 """
 from typing import Any
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, Request, Response, status
 
 from app.config import get_settings
 from app.shared.security import get_current_user
@@ -32,7 +32,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
     summary="Register a new user",
 )
 @limiter.limit(lambda: f"{get_settings().rate_limit_auth}/minute")
-async def signup(request: Request, data: UserSignup) -> TokenResponse:
+async def signup(request: Request, data: UserSignup, response: Response) -> TokenResponse:
     """
     Register a new user account.
     
@@ -40,7 +40,31 @@ async def signup(request: Request, data: UserSignup) -> TokenResponse:
     - **password**: Minimum 8 characters
     - **full_name**: User's full name
     """
-    return await AuthService.signup(data)
+    result = await AuthService.signup(data)
+    
+    # Set tokens as HTTP-only cookies
+    settings = get_settings()
+    is_production = not settings.debug
+    
+    response.set_cookie(
+        key="access_token",
+        value=result.access_token,
+        httponly=True,
+        secure=is_production,  # HTTPS only in production
+        samesite="lax",
+        max_age=result.expires_in,
+    )
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=result.refresh_token,
+        httponly=True,
+        secure=is_production,
+        samesite="lax",
+        max_age=30 * 24 * 60 * 60,  # 30 days
+    )
+    
+    return result
 
 
 @router.post(
@@ -49,14 +73,38 @@ async def signup(request: Request, data: UserSignup) -> TokenResponse:
     summary="Login user",
 )
 @limiter.limit(lambda: f"{get_settings().rate_limit_auth}/minute")
-async def login(request: Request, data: UserLogin) -> TokenResponse:
+async def login(request: Request, data: UserLogin, response: Response) -> TokenResponse:
     """
     Authenticate user and return access tokens.
     
     - **email**: Registered email address
     - **password**: Account password
     """
-    return await AuthService.login(data)
+    result = await AuthService.login(data)
+    
+    # Set tokens as HTTP-only cookies
+    settings = get_settings()
+    is_production = not settings.debug
+    
+    response.set_cookie(
+        key="access_token",
+        value=result.access_token,
+        httponly=True,
+        secure=is_production,  # HTTPS only in production
+        samesite="lax",
+        max_age=result.expires_in,
+    )
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=result.refresh_token,
+        httponly=True,
+        secure=is_production,
+        samesite="lax",
+        max_age=30 * 24 * 60 * 60,  # 30 days
+    )
+    
+    return result
 
 
 @router.post(
@@ -67,6 +115,7 @@ async def login(request: Request, data: UserLogin) -> TokenResponse:
 @limiter.limit(lambda: f"{get_settings().rate_limit_default}/minute")
 async def logout(
     request: Request,
+    response: Response,
     current_user: dict[str, Any] = Depends(get_current_user)
 ) -> MessageResponse:
     """
@@ -75,6 +124,11 @@ async def logout(
     Requires authentication.
     """
     await AuthService.logout("")
+    
+    # Clear cookies
+    response.delete_cookie(key="access_token", samesite="lax")
+    response.delete_cookie(key="refresh_token", samesite="lax")
+    
     return MessageResponse(message="Successfully logged out")
 
 
@@ -84,13 +138,48 @@ async def logout(
     summary="Refresh access token",
 )
 @limiter.limit(lambda: f"{get_settings().rate_limit_auth}/minute")
-async def refresh_token(request: Request, data: TokenRefresh) -> TokenResponse:
+async def refresh_token(request: Request, response: Response, data: TokenRefresh = None) -> TokenResponse:
     """
     Get new access token using refresh token.
     
-    - **refresh_token**: Valid refresh token from login
+    Token can be provided either in request body or from cookies.
     """
-    return await AuthService.refresh_token(data)
+    # Try to get refresh token from cookie first, then from body
+    refresh_token_value = request.cookies.get("refresh_token")
+    if not refresh_token_value and data:
+        refresh_token_value = data.refresh_token
+    
+    if not refresh_token_value:
+        from app.shared.exceptions import AuthenticationError
+        raise AuthenticationError("No refresh token provided")
+    
+    # Create TokenRefresh object
+    token_data = TokenRefresh(refresh_token=refresh_token_value)
+    result = await AuthService.refresh_token(token_data)
+    
+    # Set new tokens as HTTP-only cookies
+    settings = get_settings()
+    is_production = not settings.debug
+    
+    response.set_cookie(
+        key="access_token",
+        value=result.access_token,
+        httponly=True,
+        secure=is_production,
+        samesite="lax",
+        max_age=result.expires_in,
+    )
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=result.refresh_token,
+        httponly=True,
+        secure=is_production,
+        samesite="lax",
+        max_age=30 * 24 * 60 * 60,  # 30 days
+    )
+    
+    return result
 
 
 @router.get(

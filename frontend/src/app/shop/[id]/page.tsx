@@ -14,6 +14,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getBlurDataURL } from "@/lib/imageUtils";
 import { Loader2 } from "lucide-react";
+import WishlistButton from "@/components/ui/WishlistButton";
 
 export default function ProductPage() {
   const params = useParams();
@@ -173,6 +174,16 @@ export default function ProductPage() {
                           >
                               {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
                           </Button>
+                          <WishlistButton
+                            productId={product.id}
+                            productName={product.name}
+                            productType={product.product_type}
+                            price={product.price}
+                            image={product.images?.[0]}
+                            inStock={product.in_stock}
+                            className="h-12 w-12 border-2 border-black hover:bg-gray-50"
+                            iconSize={24}
+                          />
                       </div>
 
                       {/* Tabs/Accordion */}

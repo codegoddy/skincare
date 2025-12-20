@@ -15,6 +15,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getBlurDataURL, shouldPrioritize } from "@/lib/imageUtils";
 import { Loader2 } from "lucide-react";
+import WishlistButton from "@/components/ui/WishlistButton";
 
 import { useSearchParams } from "next/navigation";
 
@@ -211,7 +212,21 @@ function ShopContent() {
                       ) : products.length > 0 ? (
                         products.map((product, idx) => (
                          <FadeIn key={product.id} delay={idx * 0.05} direction="up" className="h-full">
-                            <div className="group flex flex-col h-full">
+                            <div className="group flex flex-col h-full relative">
+                              {/* Wishlist Button */}
+                              <div className="absolute top-4 right-4 z-20">
+                                <WishlistButton
+                                  productId={product.id}
+                                  productName={product.name}
+                                  productType={product.product_type}
+                                  price={product.price}
+                                  image={product.images?.[0]}
+                                  inStock={product.in_stock}
+                                  className="p-2 bg-white/90 hover:bg-white shadow-sm rounded-full"
+                                  iconSize={20}
+                                />
+                              </div>
+
                               <Link href={`/shop/${product.id}`} className="block">
                                   {/* Image Container */}
                                   <div className="relative w-full aspect-[4/5] bg-gray-50 mb-6 overflow-hidden border-2 border-black">

@@ -10,6 +10,7 @@ import Image from "next/image";
 import { getBlurDataURL } from "@/lib/imageUtils";
 import { useProducts } from "@/hooks/useProducts";
 import { Loader2 } from "lucide-react";
+import WishlistButton from "@/components/ui/WishlistButton";
 
 export default function ProductShowcase() {
   // Fetch first 6 active products from API
@@ -77,7 +78,21 @@ export default function ProductShowcase() {
               
               return (
                 <FadeIn key={product.id} delay={0.2 * idx} direction="up" className="h-full">
-                  <div className="group flex flex-col h-full">
+                  <div className="group flex flex-col h-full relative">
+                    {/* Wishlist Button */}
+                    <div className="absolute top-4 right-4 z-20">
+                      <WishlistButton
+                        productId={product.id}
+                        productName={product.name}
+                        productType={product.product_type}
+                        price={product.price}
+                        image={product.images?.[0]}
+                        inStock={product.in_stock}
+                        className="p-2 bg-white/90 hover:bg-white shadow-sm rounded-full"
+                        iconSize={20}
+                      />
+                    </div>
+
                     {/* Image Container */}
                     <div className="relative w-full aspect-square bg-gray-50 mb-6 overflow-hidden border-2 border-black">
                       <Image 

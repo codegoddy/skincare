@@ -26,7 +26,7 @@ export const useAuthStore = create<AuthState>()(
       }),
 
       logout: () => {
-        // Clear tokens from localStorage
+        // Clear any old tokens from localStorage (cleanup)
         if (typeof window !== 'undefined') {
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');

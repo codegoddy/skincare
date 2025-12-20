@@ -4,25 +4,38 @@ Security utilities for authentication and authorization.
 from datetime import datetime, timezone
 from typing import Any
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.database import get_supabase_client
 
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+    access_token: str | None = Cookie(default=None)
 ) -> dict[str, Any]:
     """
     Validate JWT token and return current user.
+    Token can come from either Authorization header or cookie.
     
     Raises:
         HTTPException: If token is invalid or expired.
     """
-    token = credentials.credentials
+    # Try to get token from cookie first, then from Authorization header
+    token = access_token
+    if not token and credentials:
+        token = credentials.credentials
+    
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     
     try:
         client = get_supabase_client()
@@ -52,14 +65,16 @@ async def get_current_user(
 
 
 async def get_current_user_optional(
-    credentials: HTTPAuthorizationCredentials | None = Depends(HTTPBearer(auto_error=False))
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+    access_token: str | None = Cookie(default=None)
 ) -> dict[str, Any] | None:
     """Get current user if token provided, otherwise return None."""
-    if not credentials:
+    if not access_token and not credentials:
         return None
     
     try:
-        return await get_current_user(credentials)
+        return await get_current_user(request, credentials, access_token)
     except HTTPException:
         return None
 

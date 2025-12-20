@@ -69,16 +69,12 @@ export const authService = {
   },
 
   async refreshToken(): Promise<TokenResponse> {
-    const refreshToken = getRefreshToken();
-    if (!refreshToken) {
-      throw new Error('No refresh token');
-    }
-    
+    // Refresh token is now sent automatically via cookies
     const response = await apiClient<TokenResponse>('/auth/refresh', {
       method: 'POST',
-      body: JSON.stringify({ refresh_token: refreshToken }),
+      body: JSON.stringify({}),
     });
-    setTokens(response.access_token, response.refresh_token);
+    // Tokens are now set as cookies by the backend
     return response;
   },
 
